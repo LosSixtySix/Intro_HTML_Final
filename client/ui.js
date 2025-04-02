@@ -15,34 +15,26 @@ const startGame = () =>{
     document.body.addEventListener("keydown", async(event) =>{
         if (event.key === 'w'){
             player.y -= 1
-            myGameArea.context.clearRect(0,0,myGameArea.canvas.width,myGameArea.canvas.height)
-            drawCircle(player.x,player.y)
             await updatePosition([player.x,player.y],player.name)
         }
         else if(event.key === 's')
         {
             player.y += 1
-            myGameArea.context.clearRect(0,0,myGameArea.canvas.width,myGameArea.canvas.height)
-            drawCircle(player.x,player.y)
             await updatePosition([player.x,player.y],player.name)
         }
         else if(event.key === 'a')
         {
             player.x -= 1
-            myGameArea.context.clearRect(0,0,myGameArea.canvas.width,myGameArea.canvas.height)
-            drawCircle(player.x,player.y)
             await updatePosition([player.x,player.y],player.name)
         }
         else if(event.key === 'd')
         {
             player.x +=1
-            myGameArea.context.clearRect(0,0,myGameArea.canvas.width,myGameArea.canvas.height)
-            drawCircle(player.x,player.y)
             await updatePosition([player.x,player.y],player.name)
         }
-        console.log(player.name)
+        
+        renderCircles()
     })
-    drawCircle(player.x,player.y)
 
 }
 const drawCircle = (x,y)=>{
@@ -50,5 +42,26 @@ const drawCircle = (x,y)=>{
     myGameArea.context.arc(x,y,5,0,2*Math.PI);
     myGameArea.context.stroke();
 }
+const renderCircles = async() => {
+    const positions = await loadPositions()
+    myGameArea.context.clearRect(0,0,myGameArea.canvas.width,myGameArea.canvas.height)
+    positions.forEach(element => {
+        drawCircle(element.xCordinate,element.yCordinate)
+    });
+}
 
+const update =  async() =>{
+    
+    requestAnimationFrame(()=>{
+        renderCircles();
+        update();
+    })
+}
+
+
+
+var running = true
+console.log(player.name)
 startGame()
+renderCircles()
+update()

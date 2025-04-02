@@ -5,6 +5,11 @@ export const loadPositions = async () =>{
     const body = await response.json()
     return body;
 }
+export const loadPlayer = async () =>{
+    const response = await fetch(url + "/loadPlayer")
+    const body = await response.json()
+    return body;
+}
 export const updatePosition = async(position,whatsThere) =>{
     const newPosition ={
         xCordinate: position[0],
