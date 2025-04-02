@@ -11,6 +11,19 @@ export var player = {
         }
         this.x = x
         this.y = y
-    }
+    },
+    moveLeft: function(){
+        this.x -=1
+    },  
+    moveRight: function(){
+        this.x +=1
+    },
+    moveUp: function(){
+        this.y -=1
+    },
+    moveDown: function(){
+        this.y +=1
+    },
+
 }
 player.start(50,50)

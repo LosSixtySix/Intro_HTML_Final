@@ -12,30 +12,6 @@ var myGameArea = {
 
 const startGame = () =>{
     myGameArea.start()
-    document.body.addEventListener("keydown", async(event) =>{
-        if (event.key === 'w'){
-            player.y -= 1
-            await updatePosition([player.x,player.y],player.name)
-        }
-        else if(event.key === 's')
-        {
-            player.y += 1
-            await updatePosition([player.x,player.y],player.name)
-        }
-        else if(event.key === 'a')
-        {
-            player.x -= 1
-            await updatePosition([player.x,player.y],player.name)
-        }
-        else if(event.key === 'd')
-        {
-            player.x +=1
-            await updatePosition([player.x,player.y],player.name)
-        }
-        
-        renderCircles()
-    })
-
 }
 const drawCircle = (x,y)=>{
     myGameArea.context.beginPath();
@@ -50,9 +26,35 @@ const renderCircles = async() => {
     });
 }
 
+const pressedKeys = new Set();
+const isKeyDown = (key) => pressedKeys.has(key);
+document.addEventListener('keydown',(e)=> pressedKeys.add(e.key))
+document.addEventListener('keyup',(e)=> pressedKeys.delete(e.key))
+
+const updatePhysics = async()=>{
+    if(isKeyDown('w')){
+        player.moveUp();
+        await updatePosition([player.x,player.y],player.name)
+    }
+    if(isKeyDown('s')){
+        player.moveDown();
+        await updatePosition([player.x,player.y],player.name)
+    }
+    if(isKeyDown('a')){
+        player.moveLeft();
+        await updatePosition([player.x,player.y],player.name)
+    }
+    if(isKeyDown('d')){
+        player.moveRight();
+        await updatePosition([player.x,player.y],player.name)
+    }
+}
+
+
 const update =  async() =>{
     
     requestAnimationFrame(()=>{
+        updatePhysics();
         renderCircles();
         update();
     })
