@@ -7,8 +7,9 @@ var app = builder.Build();
 
 Stack<string> players = new Stack<string>();
 
-players.Push("Player1");
 players.Push("Player2");
+players.Push("Player1");
+
 
 
 
@@ -68,6 +69,10 @@ public class WebSocketHandler
             {
                 message = players.Pop();
             }
+            else if (players.Count == 0)
+            {
+                message = "Player1";
+            }
 
             var bytes = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(message));
             var ArraySegment = new ArraySegment<byte>(bytes,0,bytes.Length);
@@ -77,6 +82,7 @@ public class WebSocketHandler
                 await socket.SendAsync(ArraySegment,WebSocketMessageType.Text,true,CancellationToken.None);
             }
             newPlayerName = message;
+            Console.WriteLine(newPlayerName);
         }
 
         
@@ -134,8 +140,10 @@ public class WebSocketHandler
                         await addPlayer();
                         if(request.position != null)
                         {
-                            positions.Add(request.position); 
+                            Position newPosition = new Position(request.position.xCordinate,request.position.yCordinate,newPlayerName);
+                            positions.Add(newPosition);
                         }
+                        
                     }
                 }
             }

@@ -1,9 +1,7 @@
-import { player} from "./domain.js"
-import {startGame} from "./ui.js"
+import {socketData, player} from "./domain.js"
 
 const url = "http://localhost:5069"
 
-export var socketData = null
 export var finishedGettingInfo = false
 export var finsishedUsingInfo = true
 
@@ -24,28 +22,10 @@ export const setfinsishedUsingInfo = () =>{
     else{
         finsishedUsingInfo = true
     }
+    
 }
-
-export const setupSocketData =  () =>{
-   socketData = {
-        socket : new WebSocket(url),
-        data: null,
-    } 
-    socketData.socket.addEventListener('open',function(event){
-        console.log('Connected to '+ url)
-        startGame()
-    })
-    socketData.socket.addEventListener('message',function(event){
-        const json = JSON.parse(event.data)
-        socketData.data = json
-        finishedGettingInfo = true
-        finsishedUsingInfo = false
-    })
-}
-
 
 export const loadPositions =  () =>{
-    console.log("getting positions...")
     const msg = {
         request: "getPositions",
         position: null,
@@ -54,9 +34,9 @@ export const loadPositions =  () =>{
 }
 export const loadPlayer =  () =>{
     const newPosition ={
-        xCordinate: player.xCordinate,
-        yCordinate: player.yCordinate,
-        whatIsThere: player.name
+        xCordinate: player.x,
+        yCordinate: player.y,
+        whatIsThere: ""
     }
     const msg ={
         request: "firstConnection",
@@ -64,11 +44,11 @@ export const loadPlayer =  () =>{
     }
     socketData.socket.send(JSON.stringify(msg))
 }
-export const updatePosition = (position,whatsThere) =>{
+export const updatePosition = () =>{
     const newPosition ={
-        xCordinate: position[0],
-        yCordinate: position[1],
-        whatIsThere: whatsThere,
+        xCordinate: player.x,
+        yCordinate: player.y,
+        whatIsThere: player.name,
     }
     const msg = {
         request: "updatePosition",

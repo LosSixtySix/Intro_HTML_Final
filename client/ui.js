@@ -1,5 +1,5 @@
-import { loadPositions, updatePosition,socketData,setupSocketData,finishedGettingInfo,finsishedUsingInfo, loadPlayer, setfinsishedUsingInfo } from "./service.js";
-import {player} from "./domain.js"
+import { dataRecieved, FirstConnection,firstConnection, player, setDataRecieved, setFirstConnection, socketData } from "./domain.js";
+import {loadPlayer, loadPositions, updatePosition} from "./service.js"
 var myGameArea = {
     canvas : document.createElement("canvas"),
     start: function() {
@@ -10,8 +10,13 @@ var myGameArea = {
     }
 }
 
+var settingUp = true
+var gettingPositions = true
+var updatingPosition = true
+
 export const startGame = () =>{
     myGameArea.start()
+    console.log("Game started....")
     //update()
 }
 const drawCircle = (x,y)=>{
@@ -36,7 +41,6 @@ document.addEventListener('keyup',(e)=> pressedKeys.delete(e.key))
 const updatePhysics = async()=>{
     if(isKeyDown('w')){
         player.moveUp();
-
     }
     if(isKeyDown('s')){
         player.moveDown();
@@ -51,24 +55,38 @@ const updatePhysics = async()=>{
 
 
 const update =  async() =>{
-    
     requestAnimationFrame(()=>{
-        updatePhysics();
-        updatePosition([player.x,player.y],player.name);
-        loadPositions();
-        if(finishedGettingInfo && finsishedUsingInfo)
-        {
-            renderCircles();
-        }
-        if(finsishedUsingInfo === false)
+        if(FirstConnection)
         {
             loadPlayer()
-            setfinsishedUsingInfo()
+            setFirstConnection()
+        }
+        if(dataRecieved && settingUp)
+        {
+            player.setName(socketData.data)
+            setDataRecieved()
+            startGame()
+            settingUp = false
+        }
+        if(player.name === "Player1" || player.name === "Player2")
+        {
+            updatePhysics()
+            updatePosition()
+            if(gettingPositions)
+            {
+                loadPositions()
+                gettingPositions = false
+            }
+            if(dataRecieved)
+            {
+                renderCircles()
+                setDataRecieved()
+                gettingPositions = true
+            }
+            
         }
         update();
     })
 }
-
-
-setupSocketData()
-
+firstConnection()
+update()
