@@ -1,10 +1,16 @@
 import { loadPlayer } from "./service.js"
 
-const playerName = await loadPlayer()
+var url = "http://localhost:5069"
+
+
+
+var playerName = ""
+
 export var player = {
-    start: function(x,y) {
+    start: function (x,y) {
         if (playerName != null){
-            this.name= playerName[0]
+            this.name= ""
+            
         }
         else{
             this.name = null

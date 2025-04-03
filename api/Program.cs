@@ -1,58 +1,153 @@
+using System.Net.WebSockets;
+using System.Text;
 using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddCors();
-
 var app = builder.Build();
-app.UseCors(x => x.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod());
 
-Stack<Stack<string>> players = new Stack<Stack<string>>();
-Stack<string> player1 = new Stack<string>();
-Stack<string> player2 = new Stack<string>();
-player1.Push("Player1");
-player2.Push("Player2");
+Stack<string> players = new Stack<string>();
 
-players.Push(player2);
-players.Push(player1);
+players.Push("Player1");
+players.Push("Player2");
 
-string fileName = "positions.json";
+
+
 List<Position> positions = new();
-//if(File.Exists(fileName))
-//{
-//    var json = File.ReadAllText(fileName);
-//    positions.AddRange(JsonSerializer.Deserialize<List<Position>>(json));
-//}
-
-app.MapGet("/", () => "Hello World!");
 
 
-app.MapGet("/positions",()=> positions);
-app.MapGet("/loadPlayer",()=> {
-    if (players.Count() > 0)
+app.UseWebSockets();
+app.Use(async (context,next) =>{
+    if (context.WebSockets.IsWebSocketRequest)
     {
-        return players.Pop();
+        await WebSocketHandler.HandleWebSocket(context,positions,players);
     }
     else
     {
-        return null;
+        await next(context);
     }
 });
 
-
-app.MapPost("/updatePosition",(Position position) =>{
-    for(int index = 0; index < positions.Count(); index ++){
-        if(positions[index].whatIsThere == position.whatIsThere){
-            positions[index] = position;
-            //var updateJson = JsonSerializer.Serialize(positions);
-            //File.WriteAllText(fileName,updateJson);
-            return;
-        }
-    }
-    positions.Add(position);
-    //var json = JsonSerializer.Serialize(positions);
-    //File.WriteAllText(fileName,json);
-});
+app.MapGet("/", () => "Hello World!");
 
 app.Run();
 
-public record Position(long xCordinate, long yCordinate, string whatIsThere);
+
+public class WebSocketHandler
+{
+
+    public static async Task HandleWebSocket(HttpContext context,List<Position> positions, Stack<string> players )
+    {
+        using var socket = await context.WebSockets.AcceptWebSocketAsync();
+        string requestRoute = context.Request.Path.ToString();
+        string token = context.Request.Query["token"];
+
+        bool connectionAlive = true;
+        List<byte> webSocketPayload = new List<byte>(1024 *4);
+        byte[] tempMessage = new byte[1024 *4];
+
+        string newPlayerName = "";
+        
+
+
+        async Task sendPositions(List<Position> message)
+        {
+            Console.WriteLine("Sending message to client....");
+
+            var bytes = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(message));
+            var ArraySegment = new ArraySegment<byte>(bytes, 0, bytes.Length);
+
+            if (socket.State == WebSocketState.Open)
+            {
+                await socket.SendAsync(ArraySegment,WebSocketMessageType.Text,true,CancellationToken.None);
+            }
+        }
+        async Task addPlayer()
+        {
+            var message = "";
+            if(players.Count > 0)
+            {
+                message = players.Pop();
+            }
+
+            var bytes = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(message));
+            var ArraySegment = new ArraySegment<byte>(bytes,0,bytes.Length);
+
+            if (socket.State == WebSocketState.Open)
+            {
+                await socket.SendAsync(ArraySegment,WebSocketMessageType.Text,true,CancellationToken.None);
+            }
+            newPlayerName = message;
+        }
+
+        
+
+        while(connectionAlive)
+        {
+            webSocketPayload.Clear();
+
+            WebSocketReceiveResult? webSocketResponse;
+
+            do
+            {
+                webSocketResponse = await socket.ReceiveAsync(tempMessage,CancellationToken.None);
+
+                webSocketPayload.AddRange(new ArraySegment<byte>(tempMessage,0,webSocketResponse.Count));
+            }
+            while(webSocketResponse.EndOfMessage == false);
+
+            if (webSocketResponse.MessageType == WebSocketMessageType.Text)
+            {
+                string json = Encoding.UTF8.GetString(webSocketPayload.ToArray());
+                
+                Request? request = JsonSerializer.Deserialize<Request>(json);
+
+                
+                if(request != null)
+                {
+                    if(request.request == "getPositions")
+                    {
+                        await sendPositions(positions);
+                    }
+                    else if(request.request == "sendNewPosition")
+                    {
+                        if (request.position != null)
+                        {
+                            positions.Add(request.position);
+                        }
+                    }
+                    else if(request.request == "updatePosition")
+                    {
+                        if (request.position != null)
+                        {
+                            for(int i = 0; i < positions.Count; i++)
+                            {
+                                if(positions[i].whatIsThere == request.position.whatIsThere)
+                                {
+                                    positions[i] = request.position;
+                                }
+                            }
+                        }
+                    }
+                    else if(request.request == "firstConnection")
+                    {
+                        
+                        await addPlayer();
+                        if(request.position != null)
+                        {
+                            positions.Add(request.position); 
+                        }
+                    }
+                }
+            }
+            else if(webSocketResponse.MessageType == WebSocketMessageType.Close)
+            {
+                connectionAlive = false;
+                Console.WriteLine(" -> A client disconnected.");
+            }
+        }
+
+    }
+}
+public record Position( long xCordinate, long yCordinate, string whatIsThere);
+public record Request(string request, Position position);
+public record Message(string type, string message);

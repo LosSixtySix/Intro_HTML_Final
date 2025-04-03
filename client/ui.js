@@ -1,4 +1,4 @@
-import { loadPositions, updatePosition } from "./service.js";
+import { loadPositions, updatePosition,socketData,setupSocketData,finishedGettingInfo,finsishedUsingInfo, loadPlayer, setfinsishedUsingInfo } from "./service.js";
 import {player} from "./domain.js"
 var myGameArea = {
     canvas : document.createElement("canvas"),
@@ -10,8 +10,9 @@ var myGameArea = {
     }
 }
 
-const startGame = () =>{
+export const startGame = () =>{
     myGameArea.start()
+    //update()
 }
 const drawCircle = (x,y)=>{
     myGameArea.context.beginPath();
@@ -19,11 +20,12 @@ const drawCircle = (x,y)=>{
     myGameArea.context.stroke();
 }
 const renderCircles = async() => {
-    const positions = await loadPositions()
-    myGameArea.context.clearRect(0,0,myGameArea.canvas.width,myGameArea.canvas.height)
-    positions.forEach(element => {
-        drawCircle(element.xCordinate,element.yCordinate)
-    });
+    const positions = socketData.data
+    if (positions != [])
+        myGameArea.context.clearRect(0,0,myGameArea.canvas.width,myGameArea.canvas.height)
+        positions.forEach(element => {
+            drawCircle(element.xCordinate,element.yCordinate)
+        });
 }
 
 const pressedKeys = new Set();
@@ -34,19 +36,16 @@ document.addEventListener('keyup',(e)=> pressedKeys.delete(e.key))
 const updatePhysics = async()=>{
     if(isKeyDown('w')){
         player.moveUp();
-        await updatePosition([player.x,player.y],player.name)
+
     }
     if(isKeyDown('s')){
         player.moveDown();
-        await updatePosition([player.x,player.y],player.name)
     }
     if(isKeyDown('a')){
         player.moveLeft();
-        await updatePosition([player.x,player.y],player.name)
     }
     if(isKeyDown('d')){
         player.moveRight();
-        await updatePosition([player.x,player.y],player.name)
     }
 }
 
@@ -55,15 +54,21 @@ const update =  async() =>{
     
     requestAnimationFrame(()=>{
         updatePhysics();
-        renderCircles();
+        updatePosition([player.x,player.y],player.name);
+        loadPositions();
+        if(finishedGettingInfo && finsishedUsingInfo)
+        {
+            renderCircles();
+        }
+        if(finsishedUsingInfo === false)
+        {
+            loadPlayer()
+            setfinsishedUsingInfo()
+        }
         update();
     })
 }
 
 
+setupSocketData()
 
-var running = true
-console.log(player.name)
-startGame()
-renderCircles()
-update()
