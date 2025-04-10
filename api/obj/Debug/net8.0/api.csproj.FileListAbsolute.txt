@@ -24,3 +24,6 @@ C:\Users\Lanu\Pictures\homework\Intro_HTML_Final\api\obj\Debug\net8.0\refint\api
 C:\Users\Lanu\Pictures\homework\Intro_HTML_Final\api\obj\Debug\net8.0\api.pdb
 C:\Users\Lanu\Pictures\homework\Intro_HTML_Final\api\obj\Debug\net8.0\api.genruntimeconfig.cache
 C:\Users\Lanu\Pictures\homework\Intro_HTML_Final\api\obj\Debug\net8.0\ref\api.dll
+C:\Users\Lanu\Pictures\homework\Intro_HTML_Final\api\bin\Debug\net8.0\api.staticwebassets.endpoints.json
+C:\Users\Lanu\Pictures\homework\Intro_HTML_Final\api\obj\Debug\net8.0\staticwebassets.build.endpoints.json
+C:\Users\Lanu\Pictures\homework\Intro_HTML_Final\api\obj\Debug\net8.0\staticwebassets\msbuild.api.Microsoft.AspNetCore.StaticWebAssetEndpoints.props

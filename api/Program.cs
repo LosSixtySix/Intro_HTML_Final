@@ -7,8 +7,6 @@ var app = builder.Build();
 
 Stack<string> players = new Stack<string>();
 
-players.Push("Player2");
-players.Push("Player1");
 
 
 
@@ -62,16 +60,28 @@ public class WebSocketHandler
                 await socket.SendAsync(ArraySegment,WebSocketMessageType.Text,true,CancellationToken.None);
             }
         }
-        async Task addPlayer()
+        async Task addPlayer(string potentialPlayerName)
         {
             var message = "";
             if(players.Count > 0)
             {
-                message = players.Pop();
+                if (players.Contains(potentialPlayerName))
+                {
+                    message = "Invalid";
+                    newPlayerName = "Invalid";
+                }
+                else
+                {
+                    players.Push(potentialPlayerName);
+                    message = potentialPlayerName;
+                    newPlayerName = potentialPlayerName;
+                }
             }
             else if (players.Count == 0)
             {
-                message = "Player1";
+                players.Push(potentialPlayerName);
+                message = potentialPlayerName;
+                newPlayerName = potentialPlayerName;
             }
 
             var bytes = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(message));
@@ -81,7 +91,7 @@ public class WebSocketHandler
             {
                 await socket.SendAsync(ArraySegment,WebSocketMessageType.Text,true,CancellationToken.None);
             }
-            newPlayerName = message;
+            
             Console.WriteLine(newPlayerName);
         }
 
@@ -134,14 +144,17 @@ public class WebSocketHandler
                             }
                         }
                     }
-                    else if(request.request == "firstConnection")
+                    else
                     {
                         
-                        await addPlayer();
-                        if(request.position != null)
+                        await addPlayer(request.request);
+                        if(newPlayerName != "Invalid")
                         {
-                            Position newPosition = new Position(request.position.xCordinate,request.position.yCordinate,newPlayerName);
-                            positions.Add(newPosition);
+                            if(request.position != null)
+                            {
+                                Position newPosition = new Position(request.position.xCordinate,request.position.yCordinate,newPlayerName);
+                                positions.Add(newPosition);
+                            }
                         }
                         
                     }

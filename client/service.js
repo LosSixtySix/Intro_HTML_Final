@@ -32,14 +32,14 @@ export const loadPositions =  () =>{
     }
     socketData.socket.send(JSON.stringify(msg))
 }
-export const loadPlayer =  () =>{
+export const loadPlayer =  (name) =>{
     const newPosition ={
         xCordinate: player.x,
         yCordinate: player.y,
         whatIsThere: ""
     }
     const msg ={
-        request: "firstConnection",
+        request: name,
         position: newPosition,
     }
     socketData.socket.send(JSON.stringify(msg))

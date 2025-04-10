@@ -51,14 +51,10 @@ export const setupSocketData =  () =>{
 export var player = {
     setName: function(name){
         this.name = name
+        playerName = name
     },
     start: function (x,y) {
-        if (playerName != null){
-            this.name= playerName
-        }
-        else{
-            this.name = null
-        }
+        this.name = null
         this.x = x
         this.y = y
     },
