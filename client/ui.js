@@ -1,5 +1,5 @@
 import { dataRecieved, FirstConnection,firstConnection, player, setDataRecieved, setFirstConnection, socketData } from "./domain.js";
-import {loadPlayer, loadPositions, updatePosition} from "./service.js"
+import {loadPlayer, loadPlayerStats, loadPositions, updatePosition} from "./service.js"
 var myGameArea = {
     canvas : document.createElement("canvas"),
     start: function() {
@@ -11,8 +11,11 @@ var myGameArea = {
 }
 
 var settingUp = true
-var gettingPositions = true
-var updatingPosition = true
+var gettingPositions = false
+var statsChange = false
+var loadingPlayerStats = true
+var positionsRecieved = false
+var statsRecieved = false
 
 export const startGame = () =>{
     myGameArea.start()
@@ -24,13 +27,30 @@ const drawCircle = (x,y)=>{
     myGameArea.context.arc(x,y,5,0,2*Math.PI);
     myGameArea.context.stroke();
 }
-const renderCircles = async() => {
+const drawRectangle = (x,y,width,height)=>{
+    myGameArea.context.fillRect(x,y,width,height)
+}
+const renderBoard = () => {
     const positions = socketData.data
-    if (positions != [])
-        myGameArea.context.clearRect(0,0,myGameArea.canvas.width,myGameArea.canvas.height)
-        positions.forEach(element => {
-            drawCircle(element.xCordinate,element.yCordinate)
-        });
+    myGameArea.context.clearRect(0,0,myGameArea.canvas.width,myGameArea.canvas.height)
+    for(let i = 0; i < positions.length; i++)
+    {
+        if(positions[i].whatIsThere == "Wall")
+        {
+            drawRectangle(positions[i].xCordinate,positions[i].yCordinate,10,10)
+        }
+        else
+        {
+            drawCircle(positions[i].xCordinate,positions[i].yCordinate)
+        }
+
+        
+    }
+    //if (positions != [])
+    //    
+    //    positions.forEach(element => {
+    //        
+    //    });
 }
 
 const pressedKeys = new Set();
@@ -113,7 +133,6 @@ const update =  async() =>{
     requestAnimationFrame(()=>{
         if(FirstConnection)
         {
-
             setFirstConnection()
         }
         if(dataRecieved && settingUp)
@@ -134,10 +153,10 @@ const update =  async() =>{
                 const playerInfoSection = document.createElement("ul")
                 playerInfoSection.id = "navPlayerInfo"
 
-                const playerNameP = document.createElement('li')
-                playerNameP.textContent = `PlayerName: ${player.name}`
+                const playerNameListItem = document.createElement('li')
+                playerNameListItem.textContent = `PlayerName: ${player.name}`
 
-                playerInfoSection.appendChild(playerNameP)
+                playerInfoSection.appendChild(playerNameListItem)
                 nav.appendChild(playerInfoSection)
             }
             else
@@ -148,20 +167,54 @@ const update =  async() =>{
         }
         if(player.name != null)
         {
-            console.log(player.name)
             updatePhysics()
             updatePosition()
+            if(statsChange)
+            {
+                gettingPositions = false
+                positionsRecieved = false
+                looadingPlayerStats = true
+                statsChange = false
+            }
             if(gettingPositions)
             {
                 loadPositions()
                 gettingPositions = false
+                positionsRecieved = true
             }
+            if(loadingPlayerStats)
+            {
+                loadPlayerStats()
+                loadingPlayerStats = false
+                gettingPositions = true
+                statsRecieved = true
+            }    
             if(dataRecieved)
             {
-                renderCircles()
-                setDataRecieved()
-                gettingPositions = true
+                
+                if(positionsRecieved)
+                {
+                    
+                    renderBoard()
+                    setDataRecieved()
+                    positionsRecieved = false
+                    gettingPositions = true
+                }
+                if(statsRecieved)
+                {
+                    setDataRecieved()
+                    const navPlayerInfo = document.getElementById("navPlayerInfo")
+                    
+                    const playerHPStat = document.createElement("li")
+                    playerHPStat.textContent = `HP: ${socketData.data.HP}`
+
+                    navPlayerInfo.appendChild(playerHPStat)
+
+                    statsRecieved = false
+                }
+                
             }
+            
             
         }
         update();

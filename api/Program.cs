@@ -5,10 +5,10 @@ using System.Text.Json;
 var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
 
-Stack<string> players = new Stack<string>();
+Stack<string> playerNames = new Stack<string>();
 
 
-
+Dictionary<string,Player> playerDict = new Dictionary<string,Player>();
 
 
 List<Position> positions = new();
@@ -18,7 +18,7 @@ app.UseWebSockets();
 app.Use(async (context,next) =>{
     if (context.WebSockets.IsWebSocketRequest)
     {
-        await WebSocketHandler.HandleWebSocket(context,positions,players);
+        await WebSocketHandler.HandleWebSocket(context,positions,playerNames,playerDict);
     }
     else
     {
@@ -31,10 +31,23 @@ app.MapGet("/", () => "Hello World!");
 app.Run();
 
 
+public class Player
+{
+    public int HP { get; set; }
+
+    public List<string> playerData = new List<string>();
+    public Player()
+    {
+        HP = 10;
+        playerData.Add(HP.ToString());
+    }
+}
+
 public class WebSocketHandler
 {
 
-    public static async Task HandleWebSocket(HttpContext context,List<Position> positions, Stack<string> players )
+
+    public static async Task HandleWebSocket(HttpContext context,List<Position> positions, Stack<string> playerNames,Dictionary<string,Player> playerDict )
     {
         using var socket = await context.WebSockets.AcceptWebSocketAsync();
         string requestRoute = context.Request.Path.ToString();
@@ -60,28 +73,42 @@ public class WebSocketHandler
                 await socket.SendAsync(ArraySegment,WebSocketMessageType.Text,true,CancellationToken.None);
             }
         }
+        async Task SendPlayerData(Player player)
+        {
+            var bytes = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(player));
+            var ArraySegment = new ArraySegment<byte>(bytes,0,bytes.Length);
+
+            if (socket.State == WebSocketState.Open)
+            {
+                await socket.SendAsync(ArraySegment,WebSocketMessageType.Text,true,CancellationToken.None);
+            }
+        }
         async Task addPlayer(string potentialPlayerName)
         {
             var message = "";
-            if(players.Count > 0)
+            if(playerNames.Count > 0)
             {
-                if (players.Contains(potentialPlayerName))
+                if (playerNames.Contains(potentialPlayerName))
                 {
                     message = "Invalid";
                     newPlayerName = "Invalid";
                 }
                 else
                 {
-                    players.Push(potentialPlayerName);
+                    playerNames.Push(potentialPlayerName);
                     message = potentialPlayerName;
                     newPlayerName = potentialPlayerName;
+                    Player newPlayer = new Player();
+                    playerDict.Add(potentialPlayerName,newPlayer);
                 }
             }
-            else if (players.Count == 0)
+            else if (playerNames.Count == 0)
             {
-                players.Push(potentialPlayerName);
+                playerNames.Push(potentialPlayerName);
                 message = potentialPlayerName;
                 newPlayerName = potentialPlayerName;
+                Player newPlayer = new Player();
+                playerDict.Add(potentialPlayerName,newPlayer);
             }
 
             var bytes = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(message));
@@ -143,6 +170,24 @@ public class WebSocketHandler
                                 }
                             }
                         }
+                    }
+                    else if(request.request == "GetPlayerStats")
+                    {
+                        if(request.position != null)
+                        {
+                            if(playerNames.Contains(request.position.whatIsThere))
+                            {
+                                SendPlayerData(playerDict[request.position.whatIsThere]);
+                            }
+                            else
+                            {
+                                SendPlayerData(null);
+                            }
+                        }
+                    }
+                    else if(request.request == "Interact")
+                    {
+
                     }
                     else
                     {

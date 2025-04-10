@@ -24,7 +24,19 @@ export const setfinsishedUsingInfo = () =>{
     }
     
 }
-
+export const loadPlayerStats = () =>{
+    const newPosition = {
+        xCordinate: player.x,
+        yCordinate: player.y,
+        whatIsThere: player.name
+    }
+    const msg = {
+        request: "GetPlayerStats",
+        position: newPosition
+    }
+    console.log(msg)
+    socketData.socket.send(JSON.stringify(msg))
+}
 export const loadPositions =  () =>{
     const msg = {
         request: "getPositions",
