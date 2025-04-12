@@ -1,3 +1,39 @@
+@import url("https://fonts.googleapis.com/css2?family=Kanit&family=Mukta&family=Roboto&family=Sofia+Sans+Condensed:wght@400;500&display=swap");
+
+
+
+:root {
+  font-family: "Kanit", sans-serif;
+}
+
 #navPlayerInfo{
     list-style-type:none;
+    padding: 0;
 }
+
+body {
+    display: flex;
+    flex-direction: row;
+    background-color: #322d44;
+  }
+nav {
+    width: 6em;
+    background-color: #4b4366;
+  }
+  form{
+    display: flex;
+    flex-direction: column;
+  }
+  input{
+    background-color: #6d6194;
+    color:#08121b;
+    border: none;
+    margin: 1em;
+    border-radius: 1em;
+  }
+  #submit , #Delete{
+    border: solid;
+  }
+  h3 {
+    text-align: center;
+  }
