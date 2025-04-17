@@ -1,10 +1,10 @@
-import { dataRecieved, FirstConnection,firstConnection, player, setDataRecieved, setFirstConnection, socketData } from "./domain.js";
+import { CurrentPositions, dataRecieved, FirstConnection,firstConnection, player, setDataRecieved, setFirstConnection, socketData } from "./domain.js";
 import {loadPlayer, loadPlayerStats, loadPositions, updatePosition} from "./service.js"
 var myGameArea = {
     canvas : document.createElement("canvas"),
     start: function() {
-        this.canvas.width = 480;
-        this.canvas.height = 270;
+        this.canvas.width = 600;
+        this.canvas.height = 600;
         this.context = this.canvas.getContext("2d");
         document.body.appendChild(this.canvas)
     }
@@ -27,24 +27,29 @@ const drawCircle = (x,y)=>{
     myGameArea.context.arc(x,y,5,0,2*Math.PI);
     myGameArea.context.stroke();
 }
+const drawImage = (x,y) =>{
+    const img = document.createElement("img")
+    img.src = "/images/BigBishop.png"
+
+    myGameArea.context.drawImage(img,x,y,25,25)
+}
 const drawRectangle = (x,y,width,height)=>{
     myGameArea.context.fillRect(x,y,width,height)
 }
 const renderBoard = () => {
     const positions = socketData.data
+    CurrentPositions.setPosition(positions)
     myGameArea.context.clearRect(0,0,myGameArea.canvas.width,myGameArea.canvas.height)
     for(let i = 0; i < positions.length; i++)
     {
         if(positions[i].whatIsThere == "Wall")
         {
-            drawRectangle(positions[i].xCordinate,positions[i].yCordinate,10,10)
+            drawRectangle(positions[i].xCordinate,positions[i].yCordinate,70,70)
         }
         else
         {
-            drawCircle(positions[i].xCordinate,positions[i].yCordinate)
-        }
-
-        
+            drawImage(positions[i].xCordinate,positions[i].yCordinate)
+        }    
     }
     //if (positions != [])
     //    
@@ -114,16 +119,16 @@ const formSetup = async()=>{
 }
 
 const updatePhysics = async()=>{
-    if(isKeyDown('w')){
+    if(isKeyDown('w') && player.y > 0){
         player.moveUp();
     }
-    if(isKeyDown('s')){
+    if(isKeyDown('s') && player.y < myGameArea.canvas.height){
         player.moveDown();
     }
-    if(isKeyDown('a')){
+    if(isKeyDown('a') && player.x > 0){
         player.moveLeft();
     }
-    if(isKeyDown('d')){
+    if(isKeyDown('d') && player.x < myGameArea.canvas.width){
         player.moveRight();
     }
 }

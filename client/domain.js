@@ -5,6 +5,12 @@ var playerName = ""
 export var socketData = null
 export var dataRecieved = null
 export var FirstConnection = false
+export var CurrentPositions =  {
+    positions: null,
+    setPosition: function(position){
+        this.positions = position
+    }
+}
 
 export const firstConnection = ()=>{
     socketData = {
@@ -59,16 +65,71 @@ export var player = {
         this.y = y
     },
     moveLeft: function(){
-        this.x -=1
+        if (CurrentPositions.positions != null)
+        {
+            var moveBool = true
+            CurrentPositions.positions.forEach(element => {
+                if (this.x -11 < element.xCordinate && this.x >= element.xCordinate  && this.y +8 > element.yCordinate && this.y-8 <= element.yCordinate && element.whatIsThere != playerName)
+                {
+                    moveBool = false
+                }
+            });
+            if (moveBool)
+            {
+                this.x -=1
+            }
+        } 
     },  
     moveRight: function(){
-        this.x +=1
+        if (CurrentPositions.positions != null)
+            {
+                var moveBool = true
+                CurrentPositions.positions.forEach(element => {
+                    if (this.x +11 > element.xCordinate && this.x <= element.xCordinate  && this.y +8 > element.yCordinate && this.y -8 <= element.yCordinate && element.whatIsThere != playerName)
+                    {
+                        moveBool = false
+                    }
+                });
+                if (moveBool)
+                {
+                    this.x +=1
+                }
+            }   
     },
     moveUp: function(){
-        this.y -=1
+        if (CurrentPositions.positions != null)
+            {
+                var moveBool = true
+                CurrentPositions.positions.forEach(element => {
+                    if (this.x +8 > element.xCordinate && this.x -8 <= element.xCordinate  && this.y -11 < element.yCordinate && this.y >= element.yCordinate && element.whatIsThere != playerName)
+                    {
+                        moveBool = false
+
+                    }
+                });
+                if (moveBool)
+                {
+                    this.y -=1
+                }
+            }   
+        
     },
     moveDown: function(){
-        this.y +=1
+        if (CurrentPositions.positions != null)
+            {
+                var moveBool = true
+                CurrentPositions.positions.forEach(element => {
+                    if (this.x +8 > element.xCordinate && this.x-8 <= element.xCordinate  && this.y +11 > element.yCordinate && this.y <= element.yCordinate && element.whatIsThere != playerName)
+                    {
+                        moveBool = false
+                    }
+                });
+                if (moveBool)
+                {
+                    this.y +=1
+                }
+            } 
+        
     },
 
 }
