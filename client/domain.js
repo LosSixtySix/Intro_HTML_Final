@@ -26,7 +26,6 @@ export const firstConnection = ()=>{
         socketData.data = json
         dataRecieved = true
     }) 
-    player.start(50,50)
 }
 export const setDataRecieved = ()=>{
     dataRecieved = false
@@ -60,7 +59,6 @@ export var player = {
         playerName = name
     },
     start: function (x,y) {
-        this.name = null
         this.x = x
         this.y = y
     },
@@ -69,7 +67,7 @@ export var player = {
         {
             var moveBool = true
             CurrentPositions.positions.forEach(element => {
-                if (this.x -11 < element.xCordinate && this.x >= element.xCordinate  && this.y +8 > element.yCordinate && this.y-8 <= element.yCordinate && element.whatIsThere != playerName)
+                if (this.x -11 < element.xCordinate && this.x >= element.xCordinate  && this.y +8 > element.yCordinate && this.y-8<= element.yCordinate && element.whatIsThere != playerName)
                 {
                     moveBool = false
                 }

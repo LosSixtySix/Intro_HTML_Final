@@ -2,8 +2,11 @@ using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json;
 
+
 var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
+const int mapWidth = 600;
+const int mapHeight = 600;
 
 Stack<string> playerNames = new Stack<string>();
 
@@ -12,6 +15,28 @@ Dictionary<string,Player> playerDict = new Dictionary<string,Player>();
 
 
 List<Position> positions = new();
+
+void buildMap()
+{
+    int wallGridWidth = mapWidth/10;
+    int wallGridHeight = mapHeight/10;
+    
+    for (int x = 0; x < wallGridWidth; x ++)
+    {
+        for (int y = 0; y<wallGridHeight; y ++)
+        {
+            Random rand = new Random();
+            int buildWall = rand.Next(10);
+            if(buildWall == 1)
+            {
+                Position newWall = new Position(x*10,y*10,"Wall");
+                positions.Add(newWall);
+            }
+        }
+    }
+}
+
+buildMap();
 
 
 app.UseWebSockets();

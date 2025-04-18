@@ -16,6 +16,7 @@ var statsChange = false
 var loadingPlayerStats = true
 var positionsRecieved = false
 var statsRecieved = false
+var firstStepFinsished = false
 
 export const startGame = () =>{
     myGameArea.start()
@@ -25,6 +26,12 @@ export const startGame = () =>{
 const drawCircle = (x,y)=>{
     myGameArea.context.beginPath();
     myGameArea.context.arc(x,y,5,0,2*Math.PI);
+    myGameArea.context.stroke();
+}
+const drawFilledCircle = (x,y)=>{
+    myGameArea.context.beginPath();
+    myGameArea.context.arc(x,y,5,0,2*Math.PI);
+    myGameArea.context.fill();
     myGameArea.context.stroke();
 }
 const drawImage = (x,y) =>{
@@ -39,16 +46,17 @@ const drawRectangle = (x,y,width,height)=>{
 const renderBoard = () => {
     const positions = socketData.data
     CurrentPositions.setPosition(positions)
+    
     myGameArea.context.clearRect(0,0,myGameArea.canvas.width,myGameArea.canvas.height)
     for(let i = 0; i < positions.length; i++)
     {
         if(positions[i].whatIsThere == "Wall")
         {
-            drawRectangle(positions[i].xCordinate,positions[i].yCordinate,70,70)
+            drawFilledCircle(positions[i].xCordinate,positions[i].yCordinate,10,10)
         }
         else
         {
-            drawImage(positions[i].xCordinate,positions[i].yCordinate)
+            drawCircle(positions[i].xCordinate,positions[i].yCordinate)
         }    
     }
     //if (positions != [])
@@ -142,14 +150,13 @@ const update =  async() =>{
         }
         if(dataRecieved && settingUp)
         {
-            if(socketData.data != "Invalid")
+            if(socketData.data != "Invalid" && firstStepFinsished === false)
             {
                 const errorMessage = document.getElementById('nameError')
                 errorMessage.textContent = "" 
                 player.setName(socketData.data)
                 setDataRecieved()
                 startGame()
-                settingUp = false
                 
                 const form = document.getElementById("navForm")
                 const nav = document.getElementById("navFormContainer")
@@ -163,14 +170,42 @@ const update =  async() =>{
 
                 playerInfoSection.appendChild(playerNameListItem)
                 nav.appendChild(playerInfoSection)
+                firstStepFinsished = true
+                loadPositions()  
             }
-            else
+            else if (socketData.data === "Invalid" )
             {
                 const errorMessage = document.getElementById('nameError')
                 errorMessage.textContent = "Name already in use"
             }
+            if(dataRecieved && firstStepFinsished)
+                {
+                    var notFound = true
+                    while(notFound)
+                    {
+                        const testX = Math.floor(Math.random() * 600)
+                        const testY = Math.floor(Math.random() * 600)
+                        const positions = socketData.data
+                        CurrentPositions.setPosition(positions)
+
+                        CurrentPositions.positions.forEach(element => {
+                            if(testX != element.xCordinate && testY != element.yCordinate)
+                            {
+                                player.start(testX,testY)
+                                notFound = false
+                                console.log(player)
+                            }
+                        });
+                    }
+                }
+                console.log(player.x)
+                if(player.x != undefined)
+                {
+                    console.log("setting up done...")
+                    settingUp = false
+                }
         }
-        if(player.name != null)
+        if(player.name != null && settingUp === false)
         {
             updatePhysics()
             updatePosition()
@@ -196,7 +231,6 @@ const update =  async() =>{
             }    
             if(dataRecieved)
             {
-                
                 if(positionsRecieved)
                 {
                     
