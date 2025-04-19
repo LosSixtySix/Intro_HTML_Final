@@ -1,11 +1,29 @@
 import { CurrentPositions, dataRecieved, FirstConnection,firstConnection, player, setDataRecieved, setFirstConnection, socketData } from "./domain.js";
-import {loadPlayer, loadPlayerStats, loadPositions, updatePosition} from "./service.js"
+import {addProjectile, loadPlayer, loadPlayerStats, loadPositions, updatePosition} from "./service.js"
+
+const pressedKeys = new Set();
+const isKeyDown = (key) => pressedKeys.has(key);
+
 var myGameArea = {
     canvas : document.createElement("canvas"),
     start: function() {
         this.canvas.width = 600;
         this.canvas.height = 600;
         this.context = this.canvas.getContext("2d");
+
+        this.canvas.onmousedown = (event) =>{
+            if (event.button === 0)
+            {
+                pressedKeys.add('m1')
+            }
+        }
+        this.canvas.onmouseup = (event)=>{
+            if (event.button === 0)
+            {
+                pressedKeys.delete('m1')
+            }
+        }
+
         document.body.appendChild(this.canvas)
     }
 }
@@ -36,12 +54,14 @@ const drawFilledCircle = (x,y)=>{
 }
 const drawImage = (x,y) =>{
     const img = document.createElement("img")
-    img.src = "/images/BigBishop.png"
+    img.src = "/images/Bishop.png"
 
-    myGameArea.context.drawImage(img,x,y,25,25)
+    myGameArea.context.drawImage(img,x,y,5,5)
 }
-const drawRectangle = (x,y,width,height)=>{
+const drawRectangle = (x,y,width,height,color)=>{
+    myGameArea.context.fillStyle = color
     myGameArea.context.fillRect(x,y,width,height)
+    myGameArea.context.fillStyle = 'black'
 }
 const renderBoard = () => {
     const positions = socketData.data
@@ -53,6 +73,10 @@ const renderBoard = () => {
         if(positions[i].whatIsThere == "Wall")
         {
             drawFilledCircle(positions[i].xCordinate,positions[i].yCordinate,10,10)
+        }
+        else if(positions[i].whatIsThere == "projectile")
+        {
+            drawRectangle(positions[i].xCordinate,positions[i].yCordinate,5,5,positions[i].color)
         }
         else
         {
@@ -66,8 +90,7 @@ const renderBoard = () => {
     //    });
 }
 
-const pressedKeys = new Set();
-const isKeyDown = (key) => pressedKeys.has(key);
+
 document.addEventListener('keydown',(e)=> pressedKeys.add(e.key))
 document.addEventListener('keyup',(e)=> pressedKeys.delete(e.key))
 
@@ -139,6 +162,14 @@ const updatePhysics = async()=>{
     if(isKeyDown('d') && player.x < myGameArea.canvas.width){
         player.moveRight();
     }
+    if(isKeyDown('m1'))
+    {
+        const newProjectile = {
+            x: player.x,
+            y: player.y,
+        }
+        addProjectile(newProjectile)
+    }
 }
 
 
@@ -188,20 +219,21 @@ const update =  async() =>{
                         const positions = socketData.data
                         CurrentPositions.setPosition(positions)
 
-                        CurrentPositions.positions.forEach(element => {
+                        for(let i = 0; i < positions.length; i++) {
+                            const element = positions[i]
                             if(testX != element.xCordinate && testY != element.yCordinate)
                             {
                                 player.start(testX,testY)
                                 notFound = false
-                                console.log(player)
+                                break;
                             }
-                        });
+                        };
                     }
                 }
-                console.log(player.x)
                 if(player.x != undefined)
                 {
                     console.log("setting up done...")
+                    setDataRecieved()
                     settingUp = false
                 }
         }

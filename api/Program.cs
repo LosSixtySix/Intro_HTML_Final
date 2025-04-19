@@ -29,7 +29,7 @@ void buildMap()
             int buildWall = rand.Next(10);
             if(buildWall == 1)
             {
-                Position newWall = new Position(x*10,y*10,"Wall");
+                Position newWall = new Position(x*10,y*10,"Wall",null);
                 positions.Add(newWall);
             }
         }
@@ -214,6 +214,15 @@ public class WebSocketHandler
                     {
 
                     }
+                    else if(request.request == "addProjectile")
+                    {
+                        if(request.position != null)
+                        {
+                            Console.WriteLine(request.position);
+                            Position newProjectile = new Position(request.position.xCordinate, request.position.yCordinate, request.position.whatIsThere,request.position.color);
+                            positions.Add(newProjectile);
+                        }
+                    }
                     else
                     {
                         
@@ -222,7 +231,7 @@ public class WebSocketHandler
                         {
                             if(request.position != null)
                             {
-                                Position newPosition = new Position(request.position.xCordinate,request.position.yCordinate,newPlayerName);
+                                Position newPosition = new Position(request.position.xCordinate,request.position.yCordinate,newPlayerName,null);
                                 positions.Add(newPosition);
                             }
                         }
@@ -239,6 +248,6 @@ public class WebSocketHandler
 
     }
 }
-public record Position( long xCordinate, long yCordinate, string whatIsThere);
+public record Position( long xCordinate, long yCordinate, string whatIsThere,string? color);
 public record Request(string request, Position position);
 public record Message(string type, string message);
