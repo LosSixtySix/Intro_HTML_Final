@@ -17,6 +17,7 @@ body {
     background-color: #125c56;
   }
 nav {
+
     width: 6em;
     background-color: #884c65;
     box-shadow: .25em .25em;
@@ -39,7 +40,16 @@ nav {
     border: none;
     margin: 1em;
     border-radius: 1em;
-
+  }
+  #navFormContainerHighScore
+  {
+    width: 10em;
+    height: 50%;
+  }
+  #filter,#filter:focus{
+    padding: 0;
+    margin: 0;
+    outline: none;
   }
   #submit , #Delete{
     border: solid;
