@@ -1,3 +1,5 @@
+import { playerTakeDamage } from "./service.js"
+
 var url = "http://localhost:5069"
 
 var playerName = ""
@@ -57,6 +59,7 @@ export var player = {
     setName: function(name){
         this.name = name
         playerName = name
+        this.HP = 1000
     },
     start: function (x,y) {
         this.x = x
@@ -118,6 +121,13 @@ export var player = {
                         moveBool = false
                     }
                 }
+                else if(element.whatIsThere === "projectile")
+                {
+                    if (this.x -11 < element.xCordinate && this.x >= element.xCordinate  && this.y +8 > element.yCordinate && this.y-8<= element.yCordinate && element.whatIsThere != playerName)
+                        {
+                            playerTakeDamage()
+                        }  
+                }
             });
             if (moveBool)
             {
@@ -136,6 +146,13 @@ export var player = {
                         {
                             moveBool = false
                         }
+                    }
+                    else if(element.whatIsThere === "projectile")
+                    {
+                        if (this.x +11 > element.xCordinate && this.x <= element.xCordinate  && this.y +8 > element.yCordinate && this.y -8 <= element.yCordinate && element.whatIsThere != playerName)
+                            {
+                                playerTakeDamage()
+                            }    
                     }
                 });
                 if (moveBool)
@@ -157,6 +174,13 @@ export var player = {
 
                         }
                     }
+                    else if (element.whatIsThere === "projectile")
+                    {
+                        if (this.x +8 > element.xCordinate && this.x -8 <= element.xCordinate  && this.y -11 < element.yCordinate && this.y >= element.yCordinate && element.whatIsThere != playerName)
+                            {
+                                playerTakeDamage()
+                            }
+                    }
                 });
                 if (moveBool)
                 {
@@ -176,6 +200,13 @@ export var player = {
                         {
                             moveBool = false
                         }
+                    }
+                    else if(element.whatIsThere === "projectile")
+                    {
+                        if (this.x +8 > element.xCordinate && this.x-8 <= element.xCordinate  && this.y +11 > element.yCordinate && this.y <= element.yCordinate && element.whatIsThere != playerName)
+                            {
+                                playerTakeDamage()
+                            }
                     }
                 });
                 if (moveBool)

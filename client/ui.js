@@ -29,13 +29,10 @@ var myGameArea = {
 }
 
 var settingUp = true
-var gettingPositions = false
-var statsChange = false
-var loadingPlayerStats = true
+var gettingPositions = true
 var positionsRecieved = false
-var statsRecieved = false
 var firstStepFinsished = false
-
+var printPositions = false
 export const startGame = () =>{
     myGameArea.start()
     console.log("Game started....")
@@ -157,23 +154,50 @@ const formSetup = async()=>{
 const updatePhysics = async()=>{
     if(isKeyDown('w') && player.y > 0){
         player.moveUp();
+        if(isKeyDown('m1'))
+            {
+                const newProjectile = {
+                    x: player.x,
+                    y: player.y + 1,
+                }
+                addProjectile(newProjectile)
+            }
     }
     if(isKeyDown('s') && player.y < myGameArea.canvas.height){
         player.moveDown();
+        if(isKeyDown('m1'))
+            {
+                const newProjectile = {
+                    x: player.x,
+                    y: player.y -1,
+                }
+                addProjectile(newProjectile)
+            }
     }
     if(isKeyDown('a') && player.x > 0){
         player.moveLeft();
+        if(isKeyDown('m1'))
+            {
+                const newProjectile = {
+                    x: player.x +1,
+                    y: player.y,
+                }
+                addProjectile(newProjectile)
+            }
     }
     if(isKeyDown('d') && player.x < myGameArea.canvas.width){
         player.moveRight();
+        if(isKeyDown('m1'))
+        {
+            const newProjectile = {
+                x: player.x -1,
+                y: player.y,
+            }
+            addProjectile(newProjectile)
+        }
     }
     if(isKeyDown('m1'))
     {
-        const newProjectile = {
-            x: player.x,
-            y: player.y,
-        }
-        addProjectile(newProjectile)
     }
 }
 
@@ -268,32 +292,19 @@ const update =  async() =>{
                     console.log("setting up done...")
                     setDataRecieved()
                     settingUp = false
+                    printPositions = true
                 }
         }
         if(player.name != null && settingUp === false)
         {
             updatePhysics()
             updatePosition()
-            if(statsChange)
-            {
-                gettingPositions = false
-                positionsRecieved = false
-                looadingPlayerStats = true
-                statsChange = false
-            }
             if(gettingPositions)
             {
                 loadPositions()
                 gettingPositions = false
                 positionsRecieved = true
-            }
-            if(loadingPlayerStats)
-            {
-                loadPlayerStats()
-                loadingPlayerStats = false
-                gettingPositions = true
-                statsRecieved = true
-            }    
+            } 
             if(dataRecieved)
             {
                 if(positionsRecieved)
@@ -303,18 +314,29 @@ const update =  async() =>{
                     setDataRecieved()
                     positionsRecieved = false
                     gettingPositions = true
-                }
-                if(statsRecieved)
-                {
-                    setDataRecieved()
-                    const navPlayerInfo = document.getElementById("navPlayerInfo")
-                    
-                    const playerHPStat = document.createElement("li")
-                    playerHPStat.textContent = `HP: ${socketData.data.HP}`
 
-                    navPlayerInfo.appendChild(playerHPStat)
+                    const playerInfoSection = document.getElementById("navPlayerInfo")
 
-                    statsRecieved = false
+                    if (CurrentPositions.positions)
+                    {
+                        CurrentPositions.positions.forEach(element => {
+                            if(element.whatIsThere === player.name)
+                            {
+                                console.log(element)
+                                const playerHPPrevious = document.getElementById("PlayerHP")
+                                if(playerHPPrevious)
+                                {
+                                    playerInfoSection.removeChild(playerHPPrevious)
+                                }
+
+                                const PlayerHP = document.createElement('li')
+                                PlayerHP.id = "PlayerHP"
+                                PlayerHP.textContent = `HP: ${element.HP}`
+
+                                playerInfoSection.appendChild(PlayerHP)
+                           }
+                        });
+                    }
                 }
                 
             }

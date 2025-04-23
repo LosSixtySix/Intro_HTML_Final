@@ -29,7 +29,7 @@ void buildMap()
             int buildWall = rand.Next(10);
             if(buildWall == 1)
             {
-                Position newWall = new Position(x*10,y*10,"Wall",null);
+                Position newWall = new Position(x*10,y*10,"Wall",null,null);
                 positions.Add(newWall);
             }
         }
@@ -60,11 +60,9 @@ public class Player
 {
     public int HP { get; set; }
 
-    public List<string> playerData = new List<string>();
     public Player()
     {
-        HP = 10;
-        playerData.Add(HP.ToString());
+        HP = 1000;
     }
 }
 
@@ -88,7 +86,6 @@ public class WebSocketHandler
 
         async Task sendPositions(List<Position> message)
         {
-            Console.WriteLine("Sending message to client....");
 
             var bytes = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(message));
             var ArraySegment = new ArraySegment<byte>(bytes, 0, bytes.Length);
@@ -209,15 +206,35 @@ public class WebSocketHandler
                             }
                         }
                     }
-                    else if(request.request == "Interact")
+                    else if(request.request == "TakeDamage")
                     {
+                        if(request.position != null)
+                        {
+                            playerDict[request.position.whatIsThere].HP -=1;
+                            Position newPosition = new Position(request.position.xCordinate,request.position.yCordinate,newPlayerName,null,playerDict[request.position.whatIsThere].HP);
+                            Position removedPosition = null;
+                            foreach(Position position in positions)
+                            {
+                                if(position.whatIsThere == newPosition.whatIsThere)
+                                {
+                                    removedPosition = position;
+                                    break;
+                                }
+                            }
+                            if(removedPosition != null)
+                            {
+                                positions.Remove(removedPosition);
+                            }   
+                            positions.Add(newPosition);                        
 
+                            Console.WriteLine(playerDict[request.position.whatIsThere].HP);
+                        }
                     }
                     else if(request.request == "addProjectile")
                     {
                         if(request.position != null)
                         {
-                            Position newProjectile = new Position(request.position.xCordinate, request.position.yCordinate, request.position.whatIsThere,request.position.color);
+                            Position newProjectile = new Position(request.position.xCordinate, request.position.yCordinate, request.position.whatIsThere,request.position.color,null);
                             positions.Add(newProjectile);
                         }
                     }
@@ -229,8 +246,13 @@ public class WebSocketHandler
                         {
                             if(request.position != null)
                             {
-                                Position newPosition = new Position(request.position.xCordinate,request.position.yCordinate,newPlayerName,null);
+                                Position newPosition = new Position(request.position.xCordinate,request.position.yCordinate,newPlayerName,null,playerDict[request.request].HP);
                                 positions.Add(newPosition);
+                                Console.WriteLine(newPosition.HP);
+                                foreach(Position position in positions)
+                                {
+                                    Console.WriteLine($"{position.whatIsThere}, {position.HP}");
+                                }
                             }
                         }
                         
@@ -246,6 +268,6 @@ public class WebSocketHandler
 
     }
 }
-public record Position( long xCordinate, long yCordinate, string whatIsThere,string? color);
+public record Position( long xCordinate, long yCordinate, string whatIsThere,string? color, long? HP);
 public record Request(string request, Position position);
 public record Message(string type, string message);

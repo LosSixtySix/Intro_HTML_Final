@@ -102,3 +102,4 @@ const addPlayers = (filterValue) =>{
 formSetup()
 articleSetup()
 addPlayers(null)
+

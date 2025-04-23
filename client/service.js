@@ -55,6 +55,19 @@ export const loadPlayer =  (name) =>{
     }
     socketData.socket.send(JSON.stringify(msg))
 }
+export const playerTakeDamage = () =>{
+    const newPosition = {
+        xCordinate: player.x,
+        yCordinate: player.y,
+        whatIsThere: player.name,
+        color: player.color
+    }
+    const msg = {
+        request: "TakeDamage",
+        position: newPosition,
+    }
+    socketData.socket.send(JSON.stringify(msg))
+}
 export const addProjectile = (projectile) => {
     console.log(player.color)
     const newPosition = {
@@ -74,6 +87,8 @@ export const updatePosition = () =>{
         xCordinate: player.x,
         yCordinate: player.y,
         whatIsThere: player.name,
+        color: player.color,
+        HP: player.HP
     }
     const msg = {
         request: "updatePosition",
