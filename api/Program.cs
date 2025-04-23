@@ -144,7 +144,6 @@ public class WebSocketHandler
                 await socket.SendAsync(ArraySegment,WebSocketMessageType.Text,true,CancellationToken.None);
             }
             
-            Console.WriteLine(newPlayerName);
         }
 
         
@@ -218,7 +217,6 @@ public class WebSocketHandler
                     {
                         if(request.position != null)
                         {
-                            Console.WriteLine(request.position);
                             Position newProjectile = new Position(request.position.xCordinate, request.position.yCordinate, request.position.whatIsThere,request.position.color);
                             positions.Add(newProjectile);
                         }

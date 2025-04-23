@@ -103,30 +103,7 @@ const formSetup = async()=>{
 
     
 
-    const highScorePageLink = document.createElement('a')
-
-    const addQueryString = (event)=>{
-        if(CurrentPositions.positions != null)
-        {
-            const params = new URLSearchParams();
-            CurrentPositions.positions.forEach(element => {
-                console.log(CurrentPositions.positions.whatIsThere)
-                if(element.whatIsThere != "Wall" && element.whatIsThere != "projectile")
-                {
-                    params.append(element.whatIsThere,element.whatIsThere)
-                }
-            });
-            const queryString = params.toString()
-            highScorePageLink.href = `/highScore.html?${queryString}`
-        }
-        else
-        {
-            highScorePageLink.href = `/highScore.html`
-        }
-    }
-
-    highScorePageLink.textContent = "High Scores"
-    highScorePageLink.addEventListener('click',addQueryString)
+    
 
     const handleForm = (event)=>{
         event.preventDefault()
@@ -172,7 +149,6 @@ const formSetup = async()=>{
     submitPlayerNameForm.appendChild(errorMessage)
 
     formContainer.appendChild(submitPlayerNameForm)
-    formContainer.appendChild(highScorePageLink)
 
     document.body.appendChild(formContainer)
 
@@ -229,7 +205,35 @@ const update =  async() =>{
                 playerNameListItem.textContent = `PlayerName: ${player.name}`
 
                 playerInfoSection.appendChild(playerNameListItem)
+
+                const highScorePageLink = document.createElement('a')
+
+                const addQueryString = (event)=>{
+                    if(CurrentPositions.positions != null)
+                    {
+                        const params = new URLSearchParams();
+                        CurrentPositions.positions.forEach(element => {
+                            console.log(CurrentPositions.positions.whatIsThere)
+                            if(element.whatIsThere != "Wall" && element.whatIsThere != "projectile")
+                            {
+                                params.append(element.whatIsThere,element.whatIsThere)
+                            }
+                        });
+                        const queryString = params.toString()
+                        highScorePageLink.href = `/highScore.html?${queryString}`
+                    }
+                    else
+                    {
+                        highScorePageLink.href = `/highScore.html`
+                    }
+                }
+
+                highScorePageLink.textContent = "High Scores"
+                highScorePageLink.addEventListener('click',addQueryString)
+
+                
                 nav.appendChild(playerInfoSection)
+                nav.appendChild(highScorePageLink)
                 firstStepFinsished = true
                 loadPositions()  
             }

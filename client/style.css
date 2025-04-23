@@ -51,6 +51,8 @@ nav {
     text-align: center;
   }
   a,a:hover,a:visited{
+    position: absolute;
+    bottom: 9em;
     outline: none;
     text-decoration: underline;
     color:inherit;
