@@ -15,13 +15,17 @@ body {
     display: flex;
     flex-direction: row;
     background-color: #125c56;
+    margin-bottom: 0;
   }
-nav {
+#navFormContainer {
 
     width: 6em;
     background-color: #884c65;
     box-shadow: .25em .25em;
     border-radius: .25em;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
   }
   form{
     display: flex;
@@ -43,8 +47,13 @@ nav {
   }
   #navFormContainerHighScore
   {
+    background-color: #884c65;
+    box-shadow: .25em .25em;
+    border-radius: .25em;
     width: 10em;
-    height: 50%;
+    height: 4em;
+    display: flex;
+    flex-direction: column;
   }
   #filter,#filter:focus{
     padding: 0;
@@ -61,8 +70,7 @@ nav {
     text-align: center;
   }
   a,a:hover,a:visited{
-    position: absolute;
-    bottom: 9em;
+    height: auto;
     outline: none;
     text-decoration: underline;
     color:inherit;

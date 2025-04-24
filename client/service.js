@@ -87,8 +87,7 @@ export const updatePosition = () =>{
         xCordinate: player.x,
         yCordinate: player.y,
         whatIsThere: player.name,
-        color: player.color,
-        HP: player.HP
+        color: player.color
     }
     const msg = {
         request: "updatePosition",

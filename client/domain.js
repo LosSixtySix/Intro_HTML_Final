@@ -123,7 +123,7 @@ export var player = {
                 }
                 else if(element.whatIsThere === "projectile")
                 {
-                    if (this.x -11 < element.xCordinate && this.x >= element.xCordinate  && this.y +8 > element.yCordinate && this.y-8<= element.yCordinate && element.whatIsThere != playerName)
+                    if (this.x -8 < element.xCordinate && this.x >= element.xCordinate  && this.y +3 > element.yCordinate && this.y-3<= element.yCordinate && element.whatIsThere != playerName)
                         {
                             playerTakeDamage()
                         }  
@@ -149,7 +149,7 @@ export var player = {
                     }
                     else if(element.whatIsThere === "projectile")
                     {
-                        if (this.x +11 > element.xCordinate && this.x <= element.xCordinate  && this.y +8 > element.yCordinate && this.y -8 <= element.yCordinate && element.whatIsThere != playerName)
+                        if (this.x +8 > element.xCordinate && this.x <= element.xCordinate  && this.y +3 > element.yCordinate && this.y -3 <= element.yCordinate && element.whatIsThere != playerName)
                             {
                                 playerTakeDamage()
                             }    
@@ -176,7 +176,7 @@ export var player = {
                     }
                     else if (element.whatIsThere === "projectile")
                     {
-                        if (this.x +8 > element.xCordinate && this.x -8 <= element.xCordinate  && this.y -11 < element.yCordinate && this.y >= element.yCordinate && element.whatIsThere != playerName)
+                        if (this.x +3 > element.xCordinate && this.x -3 <= element.xCordinate  && this.y -8 < element.yCordinate && this.y >= element.yCordinate && element.whatIsThere != playerName)
                             {
                                 playerTakeDamage()
                             }
@@ -203,7 +203,7 @@ export var player = {
                     }
                     else if(element.whatIsThere === "projectile")
                     {
-                        if (this.x +8 > element.xCordinate && this.x-8 <= element.xCordinate  && this.y +11 > element.yCordinate && this.y <= element.yCordinate && element.whatIsThere != playerName)
+                        if (this.x +3 > element.xCordinate && this.x-3 <= element.xCordinate  && this.y +8 > element.yCordinate && this.y <= element.yCordinate && element.whatIsThere != playerName)
                             {
                                 playerTakeDamage()
                             }

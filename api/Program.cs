@@ -187,7 +187,8 @@ public class WebSocketHandler
                             {
                                 if(positions[i].whatIsThere == request.position.whatIsThere)
                                 {
-                                    positions[i] = request.position;
+                                    Position newPosition = new Position(request.position.xCordinate,request.position.yCordinate,newPlayerName,null,playerDict[request.position.whatIsThere].HP);
+                                    positions[i] = newPosition;
                                 }
                             }
                         }

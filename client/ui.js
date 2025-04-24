@@ -237,7 +237,6 @@ const update =  async() =>{
                     {
                         const params = new URLSearchParams();
                         CurrentPositions.positions.forEach(element => {
-                            console.log(CurrentPositions.positions.whatIsThere)
                             if(element.whatIsThere != "Wall" && element.whatIsThere != "projectile")
                             {
                                 params.append(element.whatIsThere,element.whatIsThere)
@@ -322,7 +321,6 @@ const update =  async() =>{
                         CurrentPositions.positions.forEach(element => {
                             if(element.whatIsThere === player.name)
                             {
-                                console.log(element)
                                 const playerHPPrevious = document.getElementById("PlayerHP")
                                 if(playerHPPrevious)
                                 {
@@ -334,6 +332,8 @@ const update =  async() =>{
                                 PlayerHP.textContent = `HP: ${element.HP}`
 
                                 playerInfoSection.appendChild(PlayerHP)
+
+                                player.HP = element.HP
                            }
                         });
                     }
