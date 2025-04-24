@@ -176,7 +176,11 @@ public class WebSocketHandler
                     {
                         if (request.position != null)
                         {
-                            positions.Add(request.position);
+                            lock(LockingThings)
+                            {
+                                positions.Add(request.position);
+                            }
+                            
                         }
                     }
                     else if(request.request == "updatePosition")
@@ -188,7 +192,11 @@ public class WebSocketHandler
                                 if(positions[i].whatIsThere == request.position.whatIsThere)
                                 {
                                     Position newPosition = new Position(request.position.xCordinate,request.position.yCordinate,newPlayerName,null,playerDict[request.position.whatIsThere].HP);
-                                    positions[i] = newPosition;
+                                    lock(LockingThings)
+                                    {
+                                        positions[i] = newPosition;
+                                    }
+                                    
                                 }
                             }
                         }
@@ -214,8 +222,6 @@ public class WebSocketHandler
                             playerDict[request.position.whatIsThere].HP -=1;
                             Position newPosition = new Position(request.position.xCordinate,request.position.yCordinate,newPlayerName,null,playerDict[request.position.whatIsThere].HP);
                             Position removedPosition = null;
-                            lock(LockingThings)
-                            {
                                 foreach(Position position in positions)
                                 {
                                     if(position.whatIsThere == newPosition.whatIsThere)
@@ -224,12 +230,19 @@ public class WebSocketHandler
                                         break;
                                     }
                                 }
-                            }
                             if(removedPosition != null)
                             {
-                                positions.Remove(removedPosition);
-                            }   
-                            positions.Add(newPosition);                        
+                                lock(LockingThings)
+                                {
+                                    positions.Remove(removedPosition);
+                                }
+                                
+                            }  
+                            lock(LockingThings)
+                            {
+                                positions.Add(newPosition);   
+                            }
+                                                 
 
                         }
                     }
@@ -238,7 +251,11 @@ public class WebSocketHandler
                         if(request.position != null)
                         {
                             Position newProjectile = new Position(request.position.xCordinate, request.position.yCordinate, request.position.whatIsThere,request.position.color,null);
-                            positions.Add(newProjectile);
+                            lock(LockingThings) 
+                            {
+                                positions.Add(newProjectile);
+                            }
+                            
                         }
                     }
                     else
@@ -250,7 +267,11 @@ public class WebSocketHandler
                             if(request.position != null)
                             {
                                 Position newPosition = new Position(request.position.xCordinate,request.position.yCordinate,newPlayerName,null,playerDict[request.request].HP);
-                                positions.Add(newPosition);
+                                lock(LockingThings)
+                                {
+                                    positions.Add(newPosition);
+                                }
+                                
                             }
                         }
                         
