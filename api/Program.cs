@@ -222,14 +222,14 @@ public class WebSocketHandler
                             playerDict[request.position.whatIsThere].HP -=1;
                             Position newPosition = new Position(request.position.xCordinate,request.position.yCordinate,newPlayerName,null,playerDict[request.position.whatIsThere].HP);
                             Position removedPosition = null;
-                                foreach(Position position in positions)
+                            for(int i = 0; i < positions.Count; i++)
+                            {
+                                if(positions[i].whatIsThere == newPosition.whatIsThere)
                                 {
-                                    if(position.whatIsThere == newPosition.whatIsThere)
-                                    {
-                                        removedPosition = position;
-                                        break;
-                                    }
+                                    removedPosition = positions[i];
+                                    break;
                                 }
+                            }
                             if(removedPosition != null)
                             {
                                 lock(LockingThings)
