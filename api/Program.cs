@@ -82,7 +82,7 @@ public class WebSocketHandler
 
         string newPlayerName = "";
         
-
+        object LockingThings = new object();
 
         async Task sendPositions(List<Position> message)
         {
@@ -214,12 +214,15 @@ public class WebSocketHandler
                             playerDict[request.position.whatIsThere].HP -=1;
                             Position newPosition = new Position(request.position.xCordinate,request.position.yCordinate,newPlayerName,null,playerDict[request.position.whatIsThere].HP);
                             Position removedPosition = null;
-                            foreach(Position position in positions)
+                            lock(LockingThings)
                             {
-                                if(position.whatIsThere == newPosition.whatIsThere)
+                                foreach(Position position in positions)
                                 {
-                                    removedPosition = position;
-                                    break;
+                                    if(position.whatIsThere == newPosition.whatIsThere)
+                                    {
+                                        removedPosition = position;
+                                        break;
+                                    }
                                 }
                             }
                             if(removedPosition != null)
@@ -228,7 +231,6 @@ public class WebSocketHandler
                             }   
                             positions.Add(newPosition);                        
 
-                            Console.WriteLine(playerDict[request.position.whatIsThere].HP);
                         }
                     }
                     else if(request.request == "addProjectile")
@@ -249,11 +251,6 @@ public class WebSocketHandler
                             {
                                 Position newPosition = new Position(request.position.xCordinate,request.position.yCordinate,newPlayerName,null,playerDict[request.request].HP);
                                 positions.Add(newPosition);
-                                Console.WriteLine(newPosition.HP);
-                                foreach(Position position in positions)
-                                {
-                                    Console.WriteLine($"{position.whatIsThere}, {position.HP}");
-                                }
                             }
                         }
                         

@@ -69,7 +69,6 @@ export const playerTakeDamage = () =>{
     socketData.socket.send(JSON.stringify(msg))
 }
 export const addProjectile = (projectile) => {
-    console.log(player.color)
     const newPosition = {
         xCordinate: projectile.x,
         yCordinate: projectile.y,
