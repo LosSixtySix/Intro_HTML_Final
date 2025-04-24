@@ -1,5 +1,5 @@
 ## Project Overview
-This project is a multiplayer game. The game will be a tile based adventure/dungeon game where you go from level to level with another player. The players will have access to ranged and melee weapons. It has projectiles and will be real time. 
+This project is a multiplayer game. The game was orignally going to be a tile based dungeon crawler but that was a little too much to implement for me so now it is more of a tron esque game with trailes that players can leave that deal damage to anyone who touch them.
 
 The game will be hosted so hopefully people could play remotley but it might be out of reach for me to do that so I might stick to a local computer or local network but the goal is for it be able to be played multiplayer remotley.
 
