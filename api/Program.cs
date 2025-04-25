@@ -191,7 +191,7 @@ public class WebSocketHandler
                             {
                                 if(positions[i].whatIsThere == request.position.whatIsThere)
                                 {
-                                    Position newPosition = new Position(request.position.xCordinate,request.position.yCordinate,newPlayerName,null,playerDict[request.position.whatIsThere].HP);
+                                    Position newPosition = new Position(request.position.xCordinate,request.position.yCordinate,newPlayerName,request.position.color,playerDict[request.position.whatIsThere].HP);
                                     lock(LockingThings)
                                     {
                                         positions[i] = newPosition;
@@ -220,7 +220,7 @@ public class WebSocketHandler
                         if(request.position != null)
                         {
                             playerDict[request.position.whatIsThere].HP -=1;
-                            Position newPosition = new Position(request.position.xCordinate,request.position.yCordinate,newPlayerName,null,playerDict[request.position.whatIsThere].HP);
+                            Position newPosition = new Position(request.position.xCordinate,request.position.yCordinate,newPlayerName,request.position.color,playerDict[request.position.whatIsThere].HP);
                             Position removedPosition = null;
                             for(int i = 0; i < positions.Count; i++)
                             {
@@ -266,7 +266,7 @@ public class WebSocketHandler
                         {
                             if(request.position != null)
                             {
-                                Position newPosition = new Position(request.position.xCordinate,request.position.yCordinate,newPlayerName,null,playerDict[request.request].HP);
+                                Position newPosition = new Position(request.position.xCordinate,request.position.yCordinate,newPlayerName,request.position.color,playerDict[request.request].HP);
                                 lock(LockingThings)
                                 {
                                     positions.Add(newPosition);
