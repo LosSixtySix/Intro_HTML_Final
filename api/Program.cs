@@ -29,7 +29,7 @@ void buildMap()
             int buildWall = rand.Next(10);
             if(buildWall == 1)
             {
-                Position newWall = new Position(x*10,y*10,"Wall",null,null);
+                Position newWall = new Position(x*10,y*10,"Wall",null,null,null,null);
                 positions.Add(newWall);
             }
         }
@@ -191,7 +191,7 @@ public class WebSocketHandler
                             {
                                 if(positions[i].whatIsThere == request.position.whatIsThere)
                                 {
-                                    Position newPosition = new Position(request.position.xCordinate,request.position.yCordinate,newPlayerName,request.position.color,playerDict[request.position.whatIsThere].HP);
+                                    Position newPosition = new Position(request.position.xCordinate,request.position.yCordinate,newPlayerName,request.position.color,playerDict[request.position.whatIsThere].HP,request.position.lengthOfPath,request.position.kills);
                                     lock(LockingThings)
                                     {
                                         positions[i] = newPosition;
@@ -220,7 +220,7 @@ public class WebSocketHandler
                         if(request.position != null)
                         {
                             playerDict[request.position.whatIsThere].HP -=1;
-                            Position newPosition = new Position(request.position.xCordinate,request.position.yCordinate,newPlayerName,request.position.color,playerDict[request.position.whatIsThere].HP);
+                            Position newPosition = new Position(request.position.xCordinate,request.position.yCordinate,newPlayerName,request.position.color,playerDict[request.position.whatIsThere].HP,request.position.lengthOfPath,request.position.kills);
                             Position removedPosition = null;
                             for(int i = 0; i < positions.Count; i++)
                             {
@@ -250,7 +250,7 @@ public class WebSocketHandler
                     {
                         if(request.position != null)
                         {
-                            Position newProjectile = new Position(request.position.xCordinate, request.position.yCordinate, request.position.whatIsThere,request.position.color,null);
+                            Position newProjectile = new Position(request.position.xCordinate, request.position.yCordinate, request.position.whatIsThere,request.position.color,null,null,null);
                             lock(LockingThings) 
                             {
                                 positions.Add(newProjectile);
@@ -266,7 +266,7 @@ public class WebSocketHandler
                         {
                             if(request.position != null)
                             {
-                                Position newPosition = new Position(request.position.xCordinate,request.position.yCordinate,newPlayerName,request.position.color,playerDict[request.request].HP);
+                                Position newPosition = new Position(request.position.xCordinate,request.position.yCordinate,newPlayerName,request.position.color,playerDict[request.request].HP,request.position.lengthOfPath,request.position.kills);
                                 lock(LockingThings)
                                 {
                                     positions.Add(newPosition);
@@ -287,6 +287,6 @@ public class WebSocketHandler
 
     }
 }
-public record Position( long xCordinate, long yCordinate, string whatIsThere,string? color, long? HP);
+public record Position( long xCordinate, long yCordinate, string whatIsThere,string? color, long? HP,long? lengthOfPath,long? kills);
 public record Request(string request, Position position);
 public record Message(string type, string message);
