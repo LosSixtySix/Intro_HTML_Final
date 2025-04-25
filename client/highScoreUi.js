@@ -54,22 +54,42 @@ const addPlayers = (filterValue) =>{
 
     const uglyParams = paramString.split(`&`)
 
-    var params = []
+    var params = {}
 
     if (!filterValue )
     {
+        var currentPlayer = null
         uglyParams.forEach(element => {
-            params.push(element.split(`=`)[0])
+            const param = element.split(`=`)
+            if(param[0] != currentPlayer)
+            {
+                currentPlayer = param[0]
+                params[param[0]] = param[1]
+            }
+            else
+            {
+                params[param[0]+" k"] = param[1]
+            }
+            
         });
     }
     else
     {
+        var currentPlayer = null
         uglyParams.forEach(element => {
-            const param = element.split(`=`)[0]
+            const param = element.split(`=`)
             
-            if(param.includes(filterValue))
+            if(param[0].includes(filterValue))
             {
-                params.push(param)
+                if(param[0] != currentPlayer)
+                    {
+                        currentPlayer = param[0]
+                        params[param[0]] = param[1]
+                    }
+                    else
+                    {
+                        params[param[0]+" k"] = param[1]
+                    }
             }
         })
     }
@@ -89,11 +109,37 @@ const addPlayers = (filterValue) =>{
     const playerContainer = document.createElement(`div`)
     playerContainer.id = "PlayerContainer"
 
-    params.forEach(element =>{
-        const newPlayer = document.createElement("p")
-        newPlayer.textContent = `Player: ${element}`
+    const keys = Object.keys(params)
+    var currentPlayer = null
+    var currentInternalPlayerContainer = null
+    keys.forEach(element =>{
+        if(element == currentPlayer + " k")
+        {
+            const newPlayerKills = document.createElement('p')
+            newPlayerKills.textContent = `Kills: ${params[element]}`
 
-        playerContainer.appendChild(newPlayer)
+            currentInternalPlayerContainer.appendChild(newPlayerKills)
+        }
+        else if(element != currentPlayer)
+        {
+            currentPlayer = element
+            const internalplayerContainer = document.createElement('div')
+            internalplayerContainer.classList.add("ScorePlayerContainer")
+
+            currentInternalPlayerContainer = internalplayerContainer
+
+            const newPlayer = document.createElement("p")
+            newPlayer.textContent = `Player: ${element}`
+
+            const newPlayerPathLength = document.createElement("p")
+            newPlayerPathLength.textContent = `Path Length: ${params[element]}`
+
+            internalplayerContainer.appendChild(newPlayer)
+            internalplayerContainer.appendChild(newPlayerPathLength)
+
+            playerContainer.appendChild(internalplayerContainer)
+        }
+
     })
 
     articleContainer.appendChild(playerContainer)

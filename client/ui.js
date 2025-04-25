@@ -86,7 +86,6 @@ const renderBoard = () => {
         }
         else
         {
-            console.log(positions[i].color)
             myGameArea.context.strokeStyle = positions[i].color
             drawFilledCircle(positions[i].xCordinate,positions[i].yCordinate)
             myGameArea.context.strokeStyle = 'black'
@@ -175,6 +174,7 @@ const updatePhysics = async()=>{
                         y: player.y + 1,
                     }
                     addProjectile(newProjectile)
+                    player.lengthOfPath += 1
                 }
         }
         if(isKeyDown('s') && player.y < myGameArea.canvas.height){
@@ -186,6 +186,7 @@ const updatePhysics = async()=>{
                         y: player.y -1,
                     }
                     addProjectile(newProjectile)
+                    player.lengthOfPath += 1
                 }
         }
         if(isKeyDown('a') && player.x > 0){
@@ -197,6 +198,7 @@ const updatePhysics = async()=>{
                         y: player.y,
                     }
                     addProjectile(newProjectile)
+                    player.lengthOfPath += 1
                 }
         }
         if(isKeyDown('d') && player.x < myGameArea.canvas.width){
@@ -208,10 +210,8 @@ const updatePhysics = async()=>{
                     y: player.y,
                 }
                 addProjectile(newProjectile)
+                player.lengthOfPath += 1
             }
-        }
-        if(isKeyDown('m1'))
-        {
         }
     }
 }
@@ -254,7 +254,8 @@ const update =  async() =>{
                         CurrentPositions.positions.forEach(element => {
                             if(element.whatIsThere != "Wall" && element.whatIsThere != "projectile")
                             {
-                                params.append(element.whatIsThere,element.whatIsThere)
+                                params.append(element.whatIsThere,element.lengthOfPath)
+                                params.append(element.whatIsThere,element.kills)
                             }
                         });
                         const queryString = params.toString()

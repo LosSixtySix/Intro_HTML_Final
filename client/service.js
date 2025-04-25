@@ -48,7 +48,9 @@ export const loadPlayer =  (name) =>{
         xCordinate: player.x,
         yCordinate: player.y,
         whatIsThere: "",
-        color: player.color
+        color: player.color,
+        lengthOfPath: player.lengthOfPath,
+        kills: player.kills
     }
     const msg ={
         request: name,
@@ -61,7 +63,9 @@ export const playerTakeDamage = () =>{
         xCordinate: player.x,
         yCordinate: player.y,
         whatIsThere: player.name,
-        color: player.color
+        color: player.color,
+        lengthOfPath: player.lengthOfPath,
+        kills: player.kills
     }
     const msg = {
         request: "TakeDamage",
@@ -74,7 +78,9 @@ export const addProjectile = (projectile) => {
         xCordinate: projectile.x,
         yCordinate: projectile.y,
         whatIsThere: "projectile",
-        color: player.color
+        color: player.color,
+        lengthOfPath: player.lengthOfPath,
+        kills: player.kills
     }
     const msg = {
         request: "addProjectile",
@@ -87,7 +93,9 @@ export const updatePosition = () =>{
         xCordinate: player.x,
         yCordinate: player.y,
         whatIsThere: player.name,
-        color: player.color
+        color: player.color,
+        lengthOfPath: player.lengthOfPath,
+        kills: player.kills
     }
     const msg = {
         request: "updatePosition",

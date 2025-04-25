@@ -60,6 +60,8 @@ export var player = {
         this.name = name
         playerName = name
         this.HP = 1000
+        this.lengthOfPath = 0
+        this.kills = 0
     },
     start: function (x,y) {
         this.x = x

@@ -34,9 +34,19 @@ body {
   .submitButton:active{
     box-shadow: none;
   }
+  .ScorePlayerContainer
+  {
+    display: flex;
+    flex-direction: column;
+    margin: 1em;
+    margin-left: .5em;
+  }
   .submitButton
   {
     box-shadow: .2em .2em;
+  }
+  p {
+    margin: 0;
   }
   input{
     background-color: #125c56;
