@@ -47,7 +47,8 @@ export const loadPlayer =  (name) =>{
     const newPosition ={
         xCordinate: player.x,
         yCordinate: player.y,
-        whatIsThere: ""
+        whatIsThere: "",
+        color: player.color
     }
     const msg ={
         request: name,

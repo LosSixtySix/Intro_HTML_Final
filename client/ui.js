@@ -33,6 +33,7 @@ var gettingPositions = true
 var positionsRecieved = false
 var firstStepFinsished = false
 var printPositions = false
+var writeDeadMessage = true
 export const startGame = () =>{
     myGameArea.start()
     console.log("Game started....")
@@ -55,10 +56,10 @@ const drawImage = (x,y) =>{
 
     myGameArea.context.drawImage(img,x,y,5,5)
 }
-const drawRectangle = (x,y,width,height,color)=>{
-    myGameArea.context.fillStyle = color
+const drawRectangle = (x,y,width,height)=>{
+    
     myGameArea.context.fillRect(x,y,width,height)
-    myGameArea.context.fillStyle = 'black'
+    
 }
 const renderBoard = () => {
     const positions = socketData.data
@@ -73,11 +74,22 @@ const renderBoard = () => {
         }
         else if(positions[i].whatIsThere == "projectile")
         {
-            drawRectangle(positions[i].xCordinate,positions[i].yCordinate,5,5,positions[i].color)
+            myGameArea.context.fillStyle = positions[i].color
+            drawRectangle(positions[i].xCordinate,positions[i].yCordinate,5,5)
+            myGameArea.context.fillStyle = 'black'
+        }
+        else if(positions[i].whatIsThere == player.name)
+        {
+            myGameArea.context.strokeStyle = player.color
+            drawFilledCircle(positions[i].xCordinate,positions[i].yCordinate)
+            myGameArea.context.strokeStyle = 'black'
         }
         else
         {
-            drawCircle(positions[i].xCordinate,positions[i].yCordinate)
+            console.log(positions[i].color)
+            myGameArea.context.strokeStyle = positions[i].color
+            drawFilledCircle(positions[i].xCordinate,positions[i].yCordinate)
+            myGameArea.context.strokeStyle = 'black'
         }    
     }
     //if (positions != [])
@@ -152,52 +164,55 @@ const formSetup = async()=>{
 }
 
 const updatePhysics = async()=>{
-    if(isKeyDown('w') && player.y > 0){
-        player.moveUp();
-        if(isKeyDown('m1'))
-            {
-                const newProjectile = {
-                    x: player.x,
-                    y: player.y + 1,
+    if(player.HP > 0)
+    {
+        if(isKeyDown('w') && player.y > 0){
+            player.moveUp();
+            if(isKeyDown('m1'))
+                {
+                    const newProjectile = {
+                        x: player.x,
+                        y: player.y + 1,
+                    }
+                    addProjectile(newProjectile)
                 }
-                addProjectile(newProjectile)
-            }
-    }
-    if(isKeyDown('s') && player.y < myGameArea.canvas.height){
-        player.moveDown();
-        if(isKeyDown('m1'))
-            {
-                const newProjectile = {
-                    x: player.x,
-                    y: player.y -1,
+        }
+        if(isKeyDown('s') && player.y < myGameArea.canvas.height){
+            player.moveDown();
+            if(isKeyDown('m1'))
+                {
+                    const newProjectile = {
+                        x: player.x,
+                        y: player.y -1,
+                    }
+                    addProjectile(newProjectile)
                 }
-                addProjectile(newProjectile)
-            }
-    }
-    if(isKeyDown('a') && player.x > 0){
-        player.moveLeft();
-        if(isKeyDown('m1'))
+        }
+        if(isKeyDown('a') && player.x > 0){
+            player.moveLeft();
+            if(isKeyDown('m1'))
+                {
+                    const newProjectile = {
+                        x: player.x +1,
+                        y: player.y,
+                    }
+                    addProjectile(newProjectile)
+                }
+        }
+        if(isKeyDown('d') && player.x < myGameArea.canvas.width){
+            player.moveRight();
+            if(isKeyDown('m1'))
             {
                 const newProjectile = {
-                    x: player.x +1,
+                    x: player.x -1,
                     y: player.y,
                 }
                 addProjectile(newProjectile)
             }
-    }
-    if(isKeyDown('d') && player.x < myGameArea.canvas.width){
-        player.moveRight();
+        }
         if(isKeyDown('m1'))
         {
-            const newProjectile = {
-                x: player.x -1,
-                y: player.y,
-            }
-            addProjectile(newProjectile)
         }
-    }
-    if(isKeyDown('m1'))
-    {
     }
 }
 
@@ -336,12 +351,26 @@ const update =  async() =>{
                                 player.HP = element.HP
                            }
                         });
+                        if(player.HP <= 0)
+                        {
+                            const PlayerDeadMessagePrevious = document.getElementById("DeadMessage")
+                            if(PlayerDeadMessagePrevious)
+                            {
+                                playerInfoSection.removeChild(PlayerDeadMessagePrevious)
+                            }
+
+                            const PlayerDeadMessage = document.createElement("p")
+                            PlayerDeadMessage.id = "DeadMessage"
+                            PlayerDeadMessage.textContent = "You have Died!"
+
+                            playerInfoSection.appendChild(PlayerDeadMessage)
+                            writeDeadMessage = false
+
+                        }
                     }
                 }
                 
             }
-            
-            
         }
         update();
     })
