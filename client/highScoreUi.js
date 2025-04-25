@@ -12,6 +12,47 @@ const articleSetup  = () => {
     ArticleContainer.appendChild(playerContainer)
     document.body.appendChild(ArticleContainer)
 }
+
+const addToSortedDictionary = (sortedDictionary, key,newValue) =>{
+    const tempDict = {}
+
+    var keys =Object.keys(sortedDictionary)
+
+    const lengthOfPath = Number(newValue[0] *-1)
+    const kills = Number(newValue[1])
+
+    const score = kills + lengthOfPath
+    var newValueAdded = false
+    newValue.push(score)
+
+    if(keys.length == 0)
+    {
+        tempDict[key] = newValue
+    }
+    else
+    {
+        keys.forEach(key1 =>{
+            if(sortedDictionary[key1][2] <= score && !newValueAdded)
+            {
+                tempDict[key1] = (sortedDictionary[key1])
+                
+            }
+            else if(!newValueAdded)
+            { 
+                tempDict[key] = newValue
+                newValueAdded = true
+            }
+            if(newValueAdded)
+            {
+                tempDict[key1] = (sortedDictionary[key1])
+            }
+        })
+    }
+
+
+    return tempDict
+}
+
 const Filter = (filterValue,keyPress) =>{
     if (keyPress.length  === 1)
     {
@@ -54,7 +95,11 @@ const addPlayers = (filterValue) =>{
 
     const uglyParams = paramString.split(`&`)
 
-    var params = {}
+
+    var tempParams = {}
+
+    
+
 
     if (!filterValue )
     {
@@ -64,11 +109,11 @@ const addPlayers = (filterValue) =>{
             if(param[0] != currentPlayer)
             {
                 currentPlayer = param[0]
-                params[param[0]] = param[1]
+                tempParams[param[0]] = [param[1]]
             }
             else
             {
-                params[param[0]+" k"] = param[1]
+                tempParams[param[0]].push(param[1])
             }
             
         });
@@ -84,18 +129,32 @@ const addPlayers = (filterValue) =>{
                 if(param[0] != currentPlayer)
                     {
                         currentPlayer = param[0]
-                        params[param[0]] = param[1]
+                        tempParams[param[0]] = [param[1]]
                     }
                     else
                     {
-                        params[param[0]+" k"] = param[1]
+                        tempParams[param[0]].push(param[1]) 
                     }
             }
         })
     }
     
+    var tempParams2 = {}
 
-    
+    const keys1 = Object.keys(tempParams)
+
+    keys1.forEach(element =>{
+        tempParams2 = addToSortedDictionary(tempParams2,element,tempParams[element])
+    })
+   
+
+    const params = tempParams2
+ 
+
+
+
+
+
     const articleContainer = document.getElementById("HighScoreArticle")
 
     const children = articleContainer.children
@@ -110,37 +169,36 @@ const addPlayers = (filterValue) =>{
     playerContainer.id = "PlayerContainer"
 
     const keys = Object.keys(params)
-    var currentPlayer = null
-    var currentInternalPlayerContainer = null
-    keys.forEach(element =>{
-        if(element == currentPlayer + " k")
-        {
-            const newPlayerKills = document.createElement('p')
-            newPlayerKills.textContent = `Kills: ${params[element]}`
 
-            currentInternalPlayerContainer.appendChild(newPlayerKills)
-        }
-        else if(element != currentPlayer)
-        {
-            currentPlayer = element
-            const internalplayerContainer = document.createElement('div')
-            internalplayerContainer.classList.add("ScorePlayerContainer")
+    while(keys.length > 0){
 
-            currentInternalPlayerContainer = internalplayerContainer
+        const element = keys.pop()
 
-            const newPlayer = document.createElement("p")
-            newPlayer.textContent = `Player: ${element}`
+        const newPlayerKills = document.createElement('p')
+        newPlayerKills.textContent = `Kills: ${params[element][1]}`
 
-            const newPlayerPathLength = document.createElement("p")
-            newPlayerPathLength.textContent = `Path Length: ${params[element]}`
 
-            internalplayerContainer.appendChild(newPlayer)
-            internalplayerContainer.appendChild(newPlayerPathLength)
+        const internalplayerContainer = document.createElement('div')
+        internalplayerContainer.classList.add("ScorePlayerContainer")
 
-            playerContainer.appendChild(internalplayerContainer)
-        }
 
-    })
+        const newPlayer = document.createElement("p")
+        newPlayer.textContent = `Player: ${element}`
+
+        const newPlayerPathLength = document.createElement("p")
+        newPlayerPathLength.textContent = `Path Length: ${params[element][0]}`
+
+        const newPlayerScore = document.createElement("p")
+        newPlayerScore.textContent = `Score: ${params[element][2]}`
+
+        internalplayerContainer.appendChild(newPlayer)
+        internalplayerContainer.appendChild(newPlayerPathLength)
+        internalplayerContainer.appendChild(newPlayerKills)
+        internalplayerContainer.appendChild(newPlayerScore)
+
+        playerContainer.appendChild(internalplayerContainer)
+
+    }
 
     articleContainer.appendChild(playerContainer)
 

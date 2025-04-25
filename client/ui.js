@@ -59,8 +59,8 @@ const drawImage = (x,y) =>{
 const drawRectangle = (x,y,width,height)=>{
     
     myGameArea.context.fillRect(x,y,width,height)
-    
 }
+
 const renderBoard = () => {
     const positions = socketData.data
     CurrentPositions.setPosition(positions)
@@ -82,6 +82,11 @@ const renderBoard = () => {
         {
             myGameArea.context.strokeStyle = player.color
             drawFilledCircle(positions[i].xCordinate,positions[i].yCordinate)
+
+            myGameArea.context.fillStyle = 'red'
+            drawRectangle(player.x- 2.5, player.y - 8,5,2)
+
+            myGameArea.context.fillStyle = 'black'
             myGameArea.context.strokeStyle = 'black'
         }
         else
