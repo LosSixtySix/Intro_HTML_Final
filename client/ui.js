@@ -91,9 +91,10 @@ const renderBoard = () => {
         }
         else
         {
-            myGameArea.context.strokeStyle = positions[i].color
-            drawFilledCircle(positions[i].xCordinate,positions[i].yCordinate)
-            myGameArea.context.strokeStyle = 'black'
+            if(positions[i].HP > 0)
+                myGameArea.context.strokeStyle = positions[i].color
+                drawFilledCircle(positions[i].xCordinate,positions[i].yCordinate)
+                myGameArea.context.strokeStyle = 'black'
         }    
     }
     //if (positions != [])

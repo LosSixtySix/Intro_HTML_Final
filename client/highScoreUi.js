@@ -24,7 +24,6 @@ const addToSortedDictionary = (sortedDictionary, key,newValue) =>{
     const score = kills + lengthOfPath
     var newValueAdded = false
     newValue.push(score)
-
     if(keys.length == 0)
     {
         tempDict[key] = newValue
@@ -38,7 +37,7 @@ const addToSortedDictionary = (sortedDictionary, key,newValue) =>{
                 
             }
             else if(!newValueAdded)
-            { 
+            {
                 tempDict[key] = newValue
                 newValueAdded = true
             }
@@ -47,6 +46,10 @@ const addToSortedDictionary = (sortedDictionary, key,newValue) =>{
                 tempDict[key1] = (sortedDictionary[key1])
             }
         })
+        if(!newValueAdded)
+        {
+            tempDict[key] = newValue
+        }
     }
 
 
@@ -98,9 +101,6 @@ const addPlayers = (filterValue) =>{
 
     var tempParams = {}
 
-    
-
-
     if (!filterValue )
     {
         var currentPlayer = null
@@ -146,7 +146,7 @@ const addPlayers = (filterValue) =>{
     keys1.forEach(element =>{
         tempParams2 = addToSortedDictionary(tempParams2,element,tempParams[element])
     })
-   
+
 
     const params = tempParams2
  
