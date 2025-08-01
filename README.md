@@ -3,19 +3,4 @@ This project is a multiplayer game. The game was orignally going to be a tile ba
 
 The game will be hosted so hopefully people could play remotley but it might be out of reach for me to do that so I might stick to a local computer or local network but the goal is for it be able to be played multiplayer remotley.
 
-I choose to make a multiplayer game because I am curious if I can make one. I have thought about making one before but was always unsure how to get it to work with multiple people and I am still a little unsure of how to do it but it will be a good learning expeirence for me.
-
-## Tasks by Week
-1. April 02
-  - Backend, develop and learn how to setup a server that will be able to pass data to the players as well as store relevant data.
-  - Basic player frontend so that I can test the backend
-3. April 05
-  - Begin building the actual game on the backend. Anything that the backend will need to store as well as give out to players
-4. April 09
-  - Begin the logic for the game, probably each instance should contain most of the logic for the game to run and the backend will control data that passes to make sure it runs appropriatley 
-5. April 12
-  - Continue with game logic
-6. April 16
-  - Finished with game logic and start wokring on design and "prettiness"
-7. April 19
-  - Finish polishing the game
+I choose to make a multiplayer game because games that are multiplayer are more fun than those that are single player. I feel that a single player game is you versus the world or environment which limits the player to interacting with a world that the developer created which developers are not perfect or the greatest stratagiests so it can become lacking in challenge or lacking in variety as it is only from one person. Multiplayer games can have the same issues but they can also help overcome those challenges because nothing is harder to beat than another mind.
